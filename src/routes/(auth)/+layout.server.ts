@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from '../../../.svelte-kit/types/src/routes/(app)/dashboard/$types';
+import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async function ({ locals }) {
 	const session = await locals.getSession();

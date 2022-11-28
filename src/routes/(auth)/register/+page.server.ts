@@ -1,12 +1,6 @@
 import { auth } from '$lib/server/lucia';
-import { invalid, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-
-// export const load: PageServerLoad = async function ({ locals }) {
-// 	const session = await locals.getSession();
-// 	if (session) throw redirect(302, '/');
-// 	return {};
-// };
+import { invalid } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -20,7 +14,6 @@ export const actions: Actions = {
 
 		try {
 			const user = await auth.createUser('email', email, { password });
-			console.log('Registered user', user);
 			// TODO: if no user exist
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
