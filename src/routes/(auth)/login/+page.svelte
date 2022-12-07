@@ -62,7 +62,7 @@
 					</div>
 
 					<div class="text-sm">
-						<a href="/recover-password" class="font-medium text-indigo-600 hover:text-indigo-500"
+						<a href="/reset-password" class="font-medium text-indigo-600 hover:text-indigo-500"
 							>Forgot your password?</a
 						>
 					</div>

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
+	export let data: PageData;
 	export let form: ActionData;
 </script>
 
@@ -16,21 +17,25 @@
 
 	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			<form class="space-y-6" method="POST">
+			<form class="space-y-6" action="#" method="POST">
 				<div>
-					<label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+					<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
 					<div class="mt-1">
 						<input
-							id="email"
-							name="email"
-							type="email"
-							autocomplete="email"
+							id="password"
+							name="password"
+							type="password"
+							autocomplete="password"
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
+						<input id="token" name="token" type="hidden" class="hidden" bind:value={data.token} />
 					</div>
 				</div>
-				{#if form?.success}<p class="">Check your email for your reset link</p>{/if}
+				{#if form?.token}<p class="text-red-500">Invalid token or token have expired</p>{/if}
+				{#if form?.password}<p class="text-red-500">Invalid password</p>{/if}
+				{#if form?.success}<p class="">Your password have been updated, please login</p>{/if}
+
 				<div class="flex items-center justify-between">
 					<div class="flex items-center" />
 

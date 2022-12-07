@@ -36,3 +36,19 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Lucia setup
+
+## Reset password setup
+
+Create table
+
+```
+CREATE TABLE public.password_reset_token (
+	id UUID DEFAULT extensions.uuid_generate_v4(),
+	user_id UUID REFERENCES public.user(id),
+	token TEXT NOT NULL UNIQUE,
+	token_expires timestamp NULL
+);
+ALTER TABLE ONLY password_reset_token ADD CONSTRAINT "ID_PKEY" PRIMARY KEY (user_id,token);
+```
