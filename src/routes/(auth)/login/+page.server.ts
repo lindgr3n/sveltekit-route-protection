@@ -4,7 +4,6 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async function ({ locals }) {
 	const session = await locals.getSession();
-	console.log('INSIDE LOGIN', session);
 	if (session) throw redirect(302, '/dashboard');
 
 	return {};
