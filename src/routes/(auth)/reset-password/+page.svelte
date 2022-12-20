@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BaseButton from '$lib/components/atoms/BaseButton.svelte';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
@@ -42,11 +43,7 @@
 				</div>
 
 				<div>
-					<button
-						type="submit"
-						class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-						>Reset password</button
-					>
+					<BaseButton type="submit" class="ml-4">Reset password</BaseButton>
 				</div>
 			</form>
 		</div>
