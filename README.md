@@ -50,8 +50,8 @@ For testing we are using [Mailtrap](https://mailtrap.io)
 To make this work you need an account and get the user/password to update the env file.
 
 ```
-MAIL_USER=34553481f7c8db
-MAIL_PASSWORD=3cc6d741ebd6c9
+MAIL_USER=[MAILTRAP_USER]
+MAIL_PASSWORD=[MAILTRAP_PASSWORD]
 ```
 
 You can get this values from the SMTP settings.
@@ -71,3 +71,5 @@ ALTER TABLE ONLY password_reset_token ADD CONSTRAINT "ID_PKEY" PRIMARY KEY (user
 ```
 
 With this we now have a place to store our reset token
+
+WIP
