@@ -7,29 +7,60 @@ import { promisify } from 'util';
 export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
 
 export async function getPasswordResetToken(token: string) {
-	const { data, error } = await supabase.from('password_reset_token').select('*');
+	const today = new Date();
+	const todayFormatted = `${today.getFullYear()}-${
+		today.getMonth() + 1
+	}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+
+	const { data, error } = await supabase
+		.from('password_reset_token')
+		.select('*')
+		.lt('expires_at', todayFormatted)
+		.order('expires_at', { ascending: true });
 
 	if (!data) {
-		return;
+		return null;
 	}
 
+	// TODO: We just want the latest of each unique user_id
+	const uniqueSet = new Set();
+	for (const token of data) {
+		uniqueSet.add();
+	}
 	for (let index = 0; index < data.length; index++) {
 		const resetToken = data[index];
 		const matchingToken = await verifyScrypt(token, resetToken.token);
+		// Verify expire date
 		if (matchingToken) {
 			return resetToken;
 		}
+	}
+	return null;
+}
+
+export async function clearExpiredTokens() {
+	// TODO: Delete all token where the date is older then today
+	const today = new Date();
+	const todayFormatted = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+
+	const { data, error } = await supabase
+		.from('password_reset_token')
+		.delete()
+		.gte('expires_at', todayFormatted);
+
+	if (!data) {
+		return;
 	}
 }
 
 export async function generatePasswordResetToken(token: string, userId: string) {
 	const expiryDate = new Date();
-	expiryDate.setMinutes(expiryDate.getMinutes() + 15);
+	expiryDate.setMinutes(expiryDate.getMinutes() + 60);
 	const hashed = await hashScrypt(token);
 
 	const { data, error } = await supabase
 		.from('password_reset_token')
-		.insert([{ user_id: userId, token: hashed, token_expiry: expiryDate }]);
+		.insert([{ user_id: userId, token: hashed, expired_at: expiryDate }]);
 
 	// TODO: catch error
 }

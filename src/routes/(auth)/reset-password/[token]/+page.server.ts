@@ -1,6 +1,6 @@
 import { auth } from '$lib/server/lucia';
 import { getPasswordResetToken } from '$lib/server/supabase';
-import { error, invalid, redirect } from '@sveltejs/kit';
+import { invalid } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async function ({ params }) {
@@ -22,11 +22,11 @@ export const actions: Actions = {
 			return invalid(400, { password, invalid: true });
 		}
 
-		// Check if token exist by hashing it and matching against token
 		const matchingToken = await getPasswordResetToken(token);
 		if (!matchingToken) {
 			return invalid(400, { token, incorrect: true });
 		}
+
 		const user = await auth.getUser(matchingToken.user_id);
 		auth.updateUserPassword(user.userId, password);
 
