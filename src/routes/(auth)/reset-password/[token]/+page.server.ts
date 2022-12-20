@@ -1,9 +1,12 @@
 import { auth } from '$lib/server/lucia';
 import { getPasswordResetToken } from '$lib/server/supabase';
-import { invalid } from '@sveltejs/kit';
+import { invalid, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
-export const load: PageServerLoad = async function ({ params }) {
+export const load: PageServerLoad = async function ({ params, locals }) {
+	const session = await locals.getSession();
+	if (session) throw redirect(302, '/dashboard');
+
 	const { token } = params;
 
 	return {

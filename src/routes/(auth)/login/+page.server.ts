@@ -1,6 +1,14 @@
 import { auth } from '$lib/server/lucia';
-import { invalid } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import { invalid, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async function ({ locals }) {
+	const session = await locals.getSession();
+	console.log('INSIDE LOGIN', session);
+	if (session) throw redirect(302, '/dashboard');
+
+	return {};
+};
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {

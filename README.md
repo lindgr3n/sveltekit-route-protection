@@ -39,6 +39,8 @@ You can preview the production build with `npm run preview`.
 
 ## Lucia setup
 
+TODO: https://lucia-auth.vercel.app/sveltekit/start-here/getting-started
+
 ## Mail setup
 
 For password reset we need a mail integration.
@@ -73,3 +75,12 @@ ALTER TABLE ONLY password_reset_token ADD CONSTRAINT "ID_PKEY" PRIMARY KEY (user
 With this we now have a place to store our reset token
 
 WIP
+
+## Why not +layout.server.ts
+
+We don't want to use +layout.server.ts because it is not run on every request e.g on page navigation only on page refresh.
+You can try that by login in. While you are on the dashboard delete the auth cookie in the storage. If you try and navigate to /profile the layout will not be run. Thats why we want to use +page.server.ts.
+
+You could use await parent(); to trigger a reload of the parent layout.
+
+Good video explaining the issue https://youtu.be/UbhhJWV3bmI or more info from the issue https://github.com/sveltejs/kit/issues/6315

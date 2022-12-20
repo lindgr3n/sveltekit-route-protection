@@ -1,8 +1,16 @@
 import { auth } from '$lib/server/lucia';
 import { sendMail } from '$lib/server/mail';
 import { generatePasswordResetToken } from '$lib/server/supabase';
-import type { Actions } from './$types';
+import { redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 const { randomBytes } = await import('crypto');
+
+export const load: PageServerLoad = async function ({ locals }) {
+	const session = await locals.getSession();
+	if (session) throw redirect(302, '/dashboard');
+
+	return {};
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {
