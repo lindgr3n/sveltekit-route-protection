@@ -1,13 +1,6 @@
 import { auth } from '$lib/server/lucia';
-import { invalid, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
-
-export const load: PageServerLoad = async function ({ locals }) {
-	const session = await locals.getSession();
-	if (session) throw redirect(302, '/dashboard');
-
-	return {};
-};
+import { fail } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
@@ -16,7 +9,7 @@ export const actions: Actions = {
 		const password = data.get('password')?.toString();
 
 		if (!email) {
-			return invalid(400, { email, missing: true });
+			return fail(400, { email, missing: true });
 		}
 
 		try {
@@ -25,7 +18,7 @@ export const actions: Actions = {
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
 		} catch (error) {
-			return invalid(400, { email, incorrect: true });
+			return fail(400, { email, incorrect: true });
 		}
 	}
 };

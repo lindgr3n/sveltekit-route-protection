@@ -1,12 +1,9 @@
 import { auth } from '$lib/server/lucia';
 import { getPasswordResetToken } from '$lib/server/supabase';
-import { invalid, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
-export const load: PageServerLoad = async function ({ params, locals }) {
-	const session = await locals.getSession();
-	if (session) throw redirect(302, '/dashboard');
-
+export const load: PageServerLoad = async function ({ params }) {
 	const { token } = params;
 
 	return {
@@ -22,12 +19,12 @@ export const actions: Actions = {
 
 		// TODO: Password rules
 		if (!password) {
-			return invalid(400, { password, invalid: true });
+			return fail(400, { password, invalid: true });
 		}
 
 		const matchingToken = await getPasswordResetToken(token);
 		if (!matchingToken) {
-			return invalid(400, { token, incorrect: true });
+			return fail(400, { token, incorrect: true });
 		}
 
 		const user = await auth.getUser(matchingToken.user_id);
