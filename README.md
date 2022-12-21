@@ -1,4 +1,8 @@
-# create-svelte
+# SvelteKit route protection
+
+Basic boilerplate with all included to get up and running a basic application with a welcome guest landing page, login, register, lost password with mail and protected app routes.
+
+## create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
@@ -81,6 +85,6 @@ WIP
 We don't want to use +layout.server.ts because it is not run on every request e.g on page navigation only on page refresh.
 You can try that by login in. While you are on the dashboard delete the auth cookie in the storage. If you try and navigate to /profile the layout will not be run. Thats why we want to use +page.server.ts.
 
-You could use await parent(); to trigger a reload of the parent layout.
+You could use await parent(); to trigger a reload of the parent layout inside the load. Unsure which approach is the best.
 
 Good video explaining the issue https://youtu.be/UbhhJWV3bmI or more info from the issue https://github.com/sveltejs/kit/issues/6315
