@@ -25,7 +25,7 @@ export async function getPasswordResetToken(token: string) {
 	// TODO: We just want the latest of each unique user_id
 	const uniqueSet = new Set();
 	for (const token of data) {
-		uniqueSet.add();
+		uniqueSet.add(token);
 	}
 	for (let index = 0; index < data.length; index++) {
 		const resetToken = data[index];
