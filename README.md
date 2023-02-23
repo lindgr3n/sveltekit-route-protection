@@ -64,21 +64,19 @@ You can get this values from the SMTP settings.
 
 ## Reset password setup
 
-Create table
+Temporary implementation in wait for Lucia OTP implementation
+
+## Prisma
+
+Create and update the database using following
 
 ```
-CREATE TABLE public.password_reset_token (
-	id UUID DEFAULT extensions.uuid_generate_v4(),
-	user_id UUID REFERENCES public.user(id),
-	token TEXT NOT NULL UNIQUE,
-	token_expires timestamp NULL
-);
-ALTER TABLE ONLY password_reset_token ADD CONSTRAINT "ID_PKEY" PRIMARY KEY (user_id,token);
+npx prisma db push
+npx prisma db seed
 ```
 
-With this we now have a place to store our reset token
+Generates a user named `text@example.com` and 
 
-WIP
 
 ## Why not +layout.server.ts
 
