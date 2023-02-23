@@ -1,34 +1,33 @@
-import { createClient } from '@supabase/supabase-js';
-import { env } from '$env/dynamic/private';
+import { prisma } from '$lib/server/prisma';
 import { random, customRandom } from 'nanoid';
 import crypto from 'crypto';
 import { promisify } from 'util';
 
-export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
-
 export async function getPasswordResetToken(token: string) {
 	const today = new Date();
-	const todayFormatted = `${today.getFullYear()}-${
-		today.getMonth() + 1
-	}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-	const { data, error } = await supabase
-		.from('password_reset_token')
-		.select('*')
-		.lt('expires_at', todayFormatted)
-		.order('expires_at', { ascending: true });
+	const resetTokens = await prisma.passwordResetToken.findMany({
+		where: {
+			token_expires: {
+				gt: today
+			}
+		},
+		orderBy: {
+			token_expires: 'asc'
+		}
+	});
 
-	if (!data) {
+	if (!resetTokens) {
 		return null;
 	}
 
 	// TODO: We just want the latest of each unique user_id
 	const uniqueSet = new Set();
-	for (const token of data) {
+	for (const token of resetTokens) {
 		uniqueSet.add(token);
 	}
-	for (let index = 0; index < data.length; index++) {
-		const resetToken = data[index];
+	for (let index = 0; index < resetTokens.length; index++) {
+		const resetToken = resetTokens[index];
 		const matchingToken = await verifyScrypt(token, resetToken.token);
 		// Verify expire date
 		if (matchingToken) {
@@ -41,26 +40,27 @@ export async function getPasswordResetToken(token: string) {
 export async function clearExpiredTokens() {
 	// TODO: Delete all token where the date is older then today
 	const today = new Date();
-	const todayFormatted = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-
-	const { data, error } = await supabase
-		.from('password_reset_token')
-		.delete()
-		.gte('expires_at', todayFormatted);
-
-	if (!data) {
-		return;
-	}
+	await prisma.passwordResetToken.deleteMany({
+		where: {
+			token_expires: {
+				lt: today
+			}
+		}
+	});
 }
 
 export async function generatePasswordResetToken(token: string, userId: string) {
 	const expiryDate = new Date();
-	expiryDate.setMinutes(expiryDate.getMinutes() + 60);
+	expiryDate.setHours(expiryDate.getHours() + 1);
 	const hashed = await hashScrypt(token);
 
-	const { data, error } = await supabase
-		.from('password_reset_token')
-		.insert([{ user_id: userId, token: hashed, expired_at: expiryDate }]);
+	const data = await prisma.passwordResetToken.create({
+		data: {
+			user_id: userId,
+			token: hashed,
+			token_expires: expiryDate
+		}
+	});
 
 	// TODO: catch error
 }

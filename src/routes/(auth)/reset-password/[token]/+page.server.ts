@@ -1,5 +1,5 @@
 import { auth } from '$lib/server/lucia';
-import { getPasswordResetToken } from '$lib/server/supabase';
+import { getPasswordResetToken } from '$lib/server/models/auth';
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
@@ -28,7 +28,7 @@ export const actions: Actions = {
 		}
 
 		const user = await auth.getUser(matchingToken.user_id);
-		auth.updateUserPassword(user.userId, password);
+		await auth.updateKeyPassword('email', user.username, password);
 
 		return {
 			success: true

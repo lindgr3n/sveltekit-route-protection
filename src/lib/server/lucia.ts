@@ -1,14 +1,17 @@
 import lucia from 'lucia-auth';
-import supabase from '@lucia-auth/adapter-supabase';
+import prismaAdapter from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
-
-const url = env.SUPABASE_URL ?? '';
-const apiKey = env.SUPABASE_ANON_KEY ?? '';
+import { prisma } from '$lib/server/prisma';
 
 export const auth = lucia({
-	adapter: supabase(url, apiKey),
-	env: dev ? 'DEV' : 'PROD'
+	adapter: prismaAdapter(prisma),
+	env: dev ? 'DEV' : 'PROD',
+	transformUserData: (userData) => {
+		return {
+			userId: userData.id,
+			username: userData.username
+		};
+	}
 });
 
 export type Auth = typeof auth;

@@ -1,6 +1,6 @@
 import { auth } from '$lib/server/lucia';
 import { sendMail } from '$lib/server/mail';
-import { generatePasswordResetToken } from '$lib/server/supabase';
+import { generatePasswordResetToken } from '$lib/server/models/auth';
 import type { Actions } from './$types';
 const { randomBytes } = await import('crypto');
 
@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const email = data.get('email')?.toString() ?? '';
 		const token = randomBytes(48).toString('hex');
-		const user = await auth.getUserByProviderId('email', email);
+		const { user } = await auth.getKeyUser('email', email);
 
 		await generatePasswordResetToken(token, user.userId);
 

@@ -13,8 +13,11 @@ export const actions: Actions = {
 		}
 
 		try {
-			const user = await auth.authenticateUser('email', email, password);
-			// TODO: if no user exist?
+			const user = await auth.validateKeyPassword('email', email, password);
+
+			if (!user) {
+				return fail(400, { invalid: true });
+			}
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
 		} catch {

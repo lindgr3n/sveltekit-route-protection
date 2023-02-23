@@ -13,8 +13,20 @@ export const actions: Actions = {
 		}
 
 		try {
-			const user = await auth.createUser('email', email, { password });
+			const user = await auth.createUser({
+				key: {
+					providerId: 'email',
+					providerUserId: email,
+					password: password
+				},
+				attributes: {
+					username: email
+				}
+			});
 			// TODO: if no user exist
+			if (!user) {
+				return fail(400, { email, incorrect: true });
+			}
 			const session = await auth.createSession(user.userId);
 			locals.setSession(session);
 		} catch (error) {
